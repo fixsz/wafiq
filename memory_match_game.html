@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Match Game</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('photo3.jpeg') no-repeat center center fixed;
+      background-size: 45%; 
+      background-position: center;
+      color: #333;
+      position: relative;
+    }
+
+    /* Optional: Overlay to make the text readable on the background */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 192, 203, 0.6); /* Light pink overlay */
+      z-index: -1;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #ff69b4;
+      z-index: 1;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 10px;
+      z-index: 1;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background-color: #ff69b4;
+      color: #fff;
+      font-size: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .card.flipped {
+      background-color: #fff;
+      color: #ff69b4;
+      pointer-events: none;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #e63946;
+      display: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Memory Match Game 💖</h1>
+<div id="game-board"></div>
+<div id="message">You did it! im deeply cowwy sayang i cant afford to lose you i love so much and i will fight for this relationship love youuu. 💖</div>
+
+<script>
+  const icons = ['❤️', '💖', '💓', '💞', '💘', '💕', '💗', '💝'];
+  const cards = [...icons, ...icons]; // Duplicate icons for pairs
+  let flippedCards = [];
+  let matchedPairs = 0;
+
+  // Shuffle cards
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // Initialize the game
+  function initGame() {
+    const gameBoard = document.getElementById('game-board');
+    gameBoard.innerHTML = '';
+    shuffle(cards);
+
+    cards.forEach(icon => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.dataset.icon = icon;
+      card.addEventListener('click', flipCard);
+      gameBoard.appendChild(card);
+    });
+  }
+
+  // Flip card
+  function flipCard() {
+    if (flippedCards.length === 2) return;
+
+    this.classList.add('flipped');
+    this.textContent = this.dataset.icon;
+    flippedCards.push(this);
+
+    if (flippedCards.length === 2) {
+      checkMatch();
+    }
+  }
+
+  // Check if two flipped cards match
+  function checkMatch() {
+    const [card1, card2] = flippedCards;
+    if (card1.dataset.icon === card2.dataset.icon) {
+      matchedPairs += 1;
+      flippedCards = [];
+
+      // Check if all pairs are matched
+      if (matchedPairs === icons.length) {
+        document.getElementById('message').style.display = 'block';
+      }
+    } else {
+      setTimeout(() => {
+        card1.classList.remove('flipped');
+        card2.classList.remove('flipped');
+        card1.textContent = '';
+        card2.textContent = '';
+        flippedCards = [];
+      }, 1000);
+    }
+  }
+
+  initGame();
+</script>
+
+</body>
+</html>
+
